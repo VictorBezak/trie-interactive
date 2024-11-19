@@ -67,27 +67,28 @@ class Trie {
 
     getAllWords(search) {
         const words = [];
-        const indexList = search
-            ? search.split('').map(ch => ch.charCodeAt() - 'a'.charCodeAt())
-            : Array.from({ length: 26 }, (_, index) => index);
 
         const dfs = (node, currentWord) => {
-            if (node === null) {
-                return;
-            }
-    
+            if (node === null) return;
+
             if (node.isEndOfWord) {
                 words.push(currentWord);
             }
-    
-            for (const idx of indexList) {
-                if (node.children[idx] !== null) {
-                    dfs(node.children[idx], currentWord + String.fromCharCode('a'.charCodeAt(0) + idx));
+
+            for (let i = 0; i < ALPHABET_SIZE; i++) {
+                if (node.children[i] !== null) {
+                    dfs(node.children[i], currentWord + String.fromCharCode('a'.charCodeAt(0) + i));
                 }
             }
         };
-    
-        dfs(this.root, '');
+
+        let current = this.root;
+        for (const char of search?.toLowerCase() ?? []) {
+            const index = char.charCodeAt(0) - 'a'.charCodeAt(0);
+            current = current.children[index];
+            if (!current) return [];
+        }
+        dfs(current, search?.toLowerCase() ?? "");
 
         return words;
     }
@@ -122,7 +123,6 @@ trie.insertWord("door");
 trie.insertWord("apple");
 trie.insertWord("harmonious");
 trie.insertWord("harp");
-console.info("TRIE:", trie);
 // renderTrie(trie);
 
 const searchInput = document.querySelector("input");
@@ -137,16 +137,16 @@ searchInput.addEventListener("keydown", (e) => {
 
 searchInput.addEventListener("input", (e) => {
     const value = e.target.value;
-    value === ""
-        ? searchSuggestions.classList.add("hidden")
-        : searchSuggestions.classList.remove("hidden");
+    const words = trie.getAllWords(value);
 
-    const words = trie.getAllWords();
+    value !== "" && words.length
+        ? searchSuggestions.classList.remove("hidden")
+        : searchSuggestions.classList.add("hidden");
+
     searchSuggestions.innerHTML = "";
     for (const word of words) {
         const div = document.createElement("div");
         div.textContent = word;
         searchSuggestions.appendChild(div);
     }
-    console.info(searchSuggestions)
 });
