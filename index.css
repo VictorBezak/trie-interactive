@@ -20,6 +20,29 @@ main {
     overflow-y: scroll;
 }
 
+.search-container {
+    width: 250px;
+}
+
+input, .search-suggestions {
+    height: min-content;
+    padding: 4px;
+    width: 100%;
+    border-radius: 4px;
+}
+
+.search-suggestions {
+    border-radius: 2px;
+    content: "";
+    border: solid 1px black;
+    background-color: white;
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
 .node {
     position: absolute;
     background-color: ghostwhite;
